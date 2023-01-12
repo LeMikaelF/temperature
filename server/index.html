@@ -1,0 +1,34 @@
+<div>
+    <label>Temperature:</label>
+    <input type="range" min="-40" max="40" id="temperature">
+    <span id="temperature-value"></span>
+</div>
+
+<script>
+    const temperatureSlider = document.getElementById("temperature");
+    const temperatureValue = document.getElementById("temperature-value");
+
+    // Fetch temperature from endpoint
+    fetch('http://localhost:8080/temperature')
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            temperatureValue.innerHTML = data.temperature + "&#8451;";
+            temperatureSlider.value = data.temperature;
+        });
+
+    temperatureSlider.oninput = function () {
+        temperatureValue.innerHTML = this.value + "&#8451;"; //degree celsius symbol
+    }
+
+    function sendTemperature() {
+        const temperature = document.getElementById("temperature").value;
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://localhost:8080/temperature", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(JSON.stringify({temperature: parseFloat(temperature)}));
+    }
+
+    setInterval(sendTemperature, 10000);
+</script>
